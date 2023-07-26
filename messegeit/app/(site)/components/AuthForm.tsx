@@ -7,6 +7,8 @@ import { useState, useCallback } from 'react';
 import { FieldValues, SubmitHandler, useForm } from 'react-hook-form';
 import AuthSocialButton from './AuthSocialButton';
 import axios from 'axios';
+import { toast } from 'react-hot-toast';
+import { signIn } from 'next-auth/react';
 
 
 type Variant = 'LOGIN' | 'REGISTER';
@@ -42,18 +44,47 @@ const AuthForm = () => {
         setIsLoading(true);
         if (variant === "REGISTER") {
             //Axios Register
-            axios.post("/api/register", data);
+            axios.post("/api/register", data)
+                .catch(() => toast.error('Something went wrong!'))
+                .finally(() => {
+                    toast.success('Successfully Registered!')
+                    setIsLoading(false)
+                });
         }
 
         if (variant === "LOGIN") {
             //NextAuth SignIn
+            signIn('credentials', {
+                ...data,
+                redirect: false
+            })
+                .then((callback) => {
+                    if (callback?.error) {
+                        toast.error('Invalid credentials');
+                    }
+                    if (callback?.ok && !callback?.error) {
+                        toast.success('Welcome !')
+                    }
+                })
+                .finally(() => {
+                    setIsLoading(false);
+                })
         }
     }
 
     const socialAction = (action: string) => {
         setIsLoading(true);
-
         //NextAuth Social Sign in
+        signIn(action, { redirect: false })
+            .then((callback) => {
+                if (callback?.error) {
+                    toast.error('Invalid Credentials');
+                }
+                if (callback?.ok && !callback?.error) {
+                    toast.success('Welcome !')
+                }
+            })
+            .finally(() => setIsLoading(false));
     }
 
     return (
@@ -61,10 +92,10 @@ const AuthForm = () => {
             <div className="bg-white px-4 py-8 shadow sm:rounded-lg sm:px-10">
                 <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
                     {variant === "REGISTER" && (
-                        <Input id="name" label='Name' register={register} errors={errors} disabled={isLoading}/>
+                        <Input id="name" label='Name' register={register} errors={errors} disabled={isLoading} />
                     )}
-                    <Input id="email" label='Email Address' type="email" register={register} errors={errors} disabled={isLoading}/>
-                    <Input id="password" label='Password' type="password" register={register} errors={errors} disabled={isLoading}/>
+                    <Input id="email" label='Email Address' type="email" register={register} errors={errors} disabled={isLoading} />
+                    <Input id="password" label='Password' type="password" register={register} errors={errors} disabled={isLoading} />
                     <div>
                         <Button disabled={isLoading} fullWidth type='submit'>
                             {variant === "LOGIN" ? "Sign In" : "Register"}
