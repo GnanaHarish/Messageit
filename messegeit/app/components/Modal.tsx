@@ -100,6 +100,7 @@ const Modal: React.FC<ModalProps> = ({
                                         focus:ring-sky-500
                                         focus:ring-offset-2
                                     "
+                                    onClick={onClose}
                                     >
                                         <span className="
                                         sr-only
