@@ -1,7 +1,9 @@
 "use client";
 
+import Button from "@/app/components/Button";
 import Modal from "@/app/components/Modal";
 import Input from "@/app/components/inputs/Input";
+import Select from "@/app/components/inputs/Select";
 import { User } from "@prisma/client";
 import axios from "axios";
 import { useRouter } from "next/navigation";
@@ -102,6 +104,27 @@ const GroupChatModal: React.FC<GroupChatModalProps> = ({
                             />
                         </div>
                     </div>
+                </div>
+                <div className="
+                    mt-6
+                    flex
+                    items-center
+                    justify-end
+                    gap-x-6
+                ">
+                    <Button
+                        disabled={isLoading}
+                        onClick={onClose}
+                        type="button"
+                        secondary
+                    >
+                        Cancel
+                    </Button>
+                    <Button
+                        disabled={isLoading}
+                        onClick={onClose}
+                        type="submit"
+                    >Create</Button>
                 </div>
             </form>
 

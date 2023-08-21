@@ -9,6 +9,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { IoClose, IoTrash } from "react-icons/io5";
 import Avatar from "@/app/components/Avatar";
 import ConfirmModal from "./ConfirmModal";
+import AvatarGroup from "@/app/components/AvatarGroup";
 
 interface ProfileDrawerProps {
     data: Conversation & {
@@ -146,7 +147,11 @@ const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
                                         ">
                                                 <div className="flex flex-col items-center">
                                                     <div className="mb-2">
-                                                        <Avatar user={otherUser} />
+                                                        {data.isGroup ? (
+                                                            <AvatarGroup users={data.users} />
+                                                        ) : (
+                                                            <Avatar user={otherUser} />
+                                                        )}
                                                     </div>
                                                     <div>
                                                         {title}
@@ -155,7 +160,7 @@ const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
                                                         {statusText}
                                                     </div>
                                                     <div className="flex gap-10 my-8" >
-                                                        <div onClick={() =>  setConfirmOpen(true)} className="
+                                                        <div onClick={() => setConfirmOpen(true)} className="
                                                         flex
                                                         flex-col
                                                         gap-3
@@ -163,7 +168,7 @@ const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
                                                         cursor-pointer
                                                         hover:opacity-75  
                                                     ">
-                                                            <div  className="
+                                                            <div className="
                                                             w-10
                                                             h-10
                                                             bg-neutral-100
@@ -196,6 +201,54 @@ const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
                                                         sm:space-y-6
                                                         sm:px-6
                                                     ">
+                                                            {
+                                                                data.isGroup && (
+                                                                    <div>
+                                                                        <dt className="
+                                                                            text-sm
+                                                                            font-medium
+                                                                            text-gray-500
+                                                                            sm:w-40
+                                                                            sm:flex-shrink-0
+                                                                        ">
+                                                                            Emails
+                                                                        </dt>
+                                                                        <dd className="
+                                                                            mt-1
+                                                                            text-sm
+                                                                            text-gray-900
+                                                                            sm:col-span-2
+                                                                        ">
+                                                                            {data.users.map((user) => user.email).join(', ')}
+                                                                        </dd>
+                                                                       
+                                                                    </div>
+                                                                )
+                                                            }
+                                                             {
+                                                                data.isGroup && (
+                                                                    <div>
+                                                                        <dt className="
+                                                                            text-sm
+                                                                            font-medium
+                                                                            text-gray-500
+                                                                            sm:w-40
+                                                                            sm:flex-shrink-0
+                                                                        ">
+                                                                            Users
+                                                                        </dt>
+                                                                        <dd className="
+                                                                            mt-1
+                                                                            text-sm
+                                                                            text-gray-900
+                                                                            sm:col-span-2
+                                                                        ">
+                                                                            {data.users.map((user) => user.name).join(', ')}
+                                                                        </dd>
+                                                                       
+                                                                    </div>
+                                                                )
+                                                            }
                                                             {
                                                                 !data.isGroup && (
                                                                     <div>
