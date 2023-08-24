@@ -1,8 +1,9 @@
 import getCurrentUser from "@/app/actions/getCurrentUser";
 import { NextResponse } from "next/server";
 import prisma from "@/app/libs/prismadb";
+import { pusherServer } from "@/app/libs/pusher";
 
-export  async function POST(request: Request) {
+export async function POST(request: Request) {
   try {
     const currentUser = await getCurrentUser();
     const body = await request.json();
@@ -59,6 +60,16 @@ export  async function POST(request: Request) {
     if (!currentUser?.id || !currentUser?.email) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
+
+    await pusherServer.trigger(conversationIds, "message:new", newMessage);
+    const lastMessage =
+      updatedConversation.messages[updatedConversation.messages.length - 1];
+    updatedConversation.users.map((user) => {
+      pusherServer.trigger(user.email!, "conversation:update", {
+        id: conversationIds,
+        messages: [lastMessage],
+      });
+    });
 
     return NextResponse.json(newMessage);
   } catch (error: any) {
